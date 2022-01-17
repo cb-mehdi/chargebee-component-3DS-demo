@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <!-- Include chargebee js script -->
+    <script src="https://js.chargebee.com/v2/chargebee.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  </head>
+  <body style="justify-content:center;height:100%;width:100%;">
+  <div style="margin-top:150px;margin-left: 15%;">
+    <form id="payment" style="width:20%;">
+      <!-- Specify container elements for mounting card elements -->
+      <!-- Chargebee iframes get mounted here... -->
+      <!-- Card Number container -->
+      <div id="card-number" class="ex1-input"></div>
+      <!-- Card Expiry container -->
+      <div id="card-expiry" class="ex1-input"></div>
+      <!-- Card CVV container -->
+      <div id="card-cvc" class="ex1-input"></div>
+
+      <!-- Container for displaying validation errors -->
+      <div id="error" role="alert"></div>
+
+      <button id="submit-button" type="submit" class="ex1-button">
+        Submit
+      </button>
+
+    </form>
+
+    <div id="loader"></div>
+
+
+    <h3 id="token">token:</h3>
+    <h3 id="errors" style="color:red;">error:</h3>
+
+
+    <div style="margin-top: 300px; font-size:15px;">3DS authentication test card: 4000 0027 6000 3184</div>
+    <div style="margin-top: 20px; font-size:15px;">3DS frictionless authentication test card: 4242 4242 4242 4242</div>
+  </div>
+
+    <script src="init.js"></script>
+  </body>
+</html>
