@@ -5,7 +5,7 @@ $(document).ready(function() {
 
   // CALL BACKEND TO GET A PaymentIntent!
   var xmlHttp = new XMLHttpRequest();
-  xmlHttp.open( "GET", "http://localhost:4567/generatePaymentIntent", false); // false for synchronous request
+  xmlHttp.open( "GET", "http://localhost:4567/generatePaymentIntent?gateway=stripe&amount=999&currency_code=USD", false); // false for synchronous request
   xmlHttp.send( null );
   console.log(xmlHttp.responseText);
   var paymentIntent =  JSON. parse(xmlHttp.responseText);
@@ -108,7 +108,7 @@ $(document).ready(function() {
     // Mount card component
     cardComponent.mount();
 
-    // Automatically focus on card fields 
+    // Automatically focus on card fields
     cardComponent.on('ready', function() {
       cardComponent.focus();
     })
@@ -116,12 +116,12 @@ $(document).ready(function() {
     /*let callbacks = {
       success: function(intent) {
         console.log("Success!!! PaymentIntent: " + intent);
-      }, 
-    
+      },
+
       error: function(intent, error) {
         console.log("Error!!! PaymentIntent: " + intent);
-      },  
-      
+      },
+
       change: function(intent) {
         console.log("Change!!! PaymentIntent: " + intent);
       }
@@ -135,11 +135,11 @@ $(document).ready(function() {
       $("#submit-button").addClass("submit");
       event.preventDefault();
       // Perform 3D Secure authorization
-      cardComponent.authorizeWith3ds(paymentIntent, callbacks).then(paymentIntent => {
+      cardComponent.authorizeWith3ds(paymentIntent,{firstName: "John",lastName: "Doe"}, callbacks).then(paymentIntent => {
         //alert("Success!!! PaymentIntent:" + paymentIntent);
-
+        /// TODO send a request to backend to proceed with Customer and subscription creation.
         $("#loader").hide();
-        console.log("Payment intent info: " + paymentIntent);
+        console.log("Payment intent info: " + JSON.stringify(paymentIntent));
         $("#token").show();
         $("#token").html("Succesfully tokenized card with payment intent id: " + paymentIntent.id);
         $("#errors").hide();
