@@ -2,10 +2,11 @@ $(document).ready(function() {
   $("#loader").hide();
   $("#errors").hide();
   $("#token").hide();
+  $("#customer").hide();
 
   // CALL BACKEND TO GET A PaymentIntent!
   var xmlHttp = new XMLHttpRequest();
-  xmlHttp.open( "GET", "http://localhost:4567/generatePaymentIntent?gateway=stripe&amount=999&currency_code=USD", false); // false for synchronous request
+  xmlHttp.open( "GET", "http://localhost:4567/generatePaymentIntent?gateway=adyen&amount=1001&currency_code=EUR", false); // false for synchronous request
   xmlHttp.send( null );
   console.log(xmlHttp.responseText);
   var paymentIntent =  JSON. parse(xmlHttp.responseText);
@@ -143,7 +144,17 @@ $(document).ready(function() {
         $("#token").show();
         $("#token").html("Succesfully tokenized card with payment intent id: " + paymentIntent.id);
         $("#errors").hide();
-        // Send ajax call to create a subscription or to create a card payment source using the paymentIntent ID
+        if(paymentIntent.status == "authorized"){
+          // Send ajax call to create a subscription or to create a card payment source using the paymentIntent ID
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.open( "GET", "http://localhost:4567/createCustomer?intentId=" + paymentIntent.id + "&customerId=demoCustomer_" + Math.floor(Math.random() * 1000000).toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping:false}), false); // false for synchronous request
+          xmlHttp.send( null );
+          console.log("RESULT CUSTOMER: " + xmlHttp.responseText);
+          var customer =  JSON.parse(xmlHttp.responseText);
+          $("#customer").show();
+          $("#customer").html("Succesfully created Customer with card: <b>" + customer.customer.id + "</b>");
+        }
+
       }).catch(error => {
         $("#loader").hide();
         $("#submit-button").removeClass("submit");
@@ -151,6 +162,7 @@ $(document).ready(function() {
         $("#errors").show();
         $("#errors").html("Problem while tokenizing your card details\n" + error);
         $("#token").hide();
+        $("#customer").hide();
         console.log(error);
       });
     });

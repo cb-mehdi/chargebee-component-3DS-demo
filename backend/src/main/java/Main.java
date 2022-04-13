@@ -34,13 +34,52 @@ public class Main {
 
         get("/generatePaymentIntent", (request, response) -> generateNewPaymentIntent(request));
 
-        System.out.println("Hello World!");
-
+        get("/createCustomer", (request, response) -> createNewCustomer(request));
 
     }
 
+    private static String createNewCustomer(Request request) throws IOException {
+        System.out.println("CREATING A NEW CUSTOMER");
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpPost httppost = new HttpPost("https://mehdieurope-test.chargebee.com/api/v2/customers");
+        httppost.addHeader("Authorization","Basic dGVzdF95TXpuNTl3eExTY3VQTHJZR2JHUHVmNFVQbFRib2hOQVQ6");
+
+        // Request parameters and other properties.
+        List<BasicNameValuePair> params = new ArrayList<>(2);
+
+        if(request.queryParams("intentId") != null){
+            params.add(new BasicNameValuePair("payment_intent[id]", request.queryParams("intentId")));
+        }
+        if(request.queryParams("customerId") != null && request.queryParams("customerId").length()>3){
+            params.add(new BasicNameValuePair("id", request.queryParams("customerId")));
+        }
+
+        try {
+            httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        //Execute and get the response.
+        CloseableHttpResponse response = null;
+        try {
+            response = httpclient.execute(httppost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HttpEntity entity = response.getEntity();
+
+
+        String responseString = EntityUtils.toString(entity);
+        if(responseString.contains("{\"customer\": ")){
+            responseString = responseString.split("customer\": ")[1];
+            responseString=responseString.substring(0,responseString.length()-1);
+        }
+        return responseString;
+    }
 
     private static String generateNewPaymentIntent(Request request) throws IOException {
+        System.out.println("CREATING A NEW PAYMENT INTENT");
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost("https://mehdieurope-test.chargebee.com/api/v2/payment_intents");
         httppost.addHeader("Authorization","Basic dGVzdF95TXpuNTl3eExTY3VQTHJZR2JHUHVmNFVQbFRib2hOQVQ6");
@@ -99,6 +138,8 @@ public class Main {
         }
         */
     }
+
+
 
     static String pickGateway(String gatewayCode){
         switch(gatewayCode){
